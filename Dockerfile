@@ -8,13 +8,7 @@ ENV LANG=C.UTF-8
 ENV ALLOWED_IDS ""
 ENV PHONE_NUMBER ""
 
-RUN apt -yqq update && \
-    apt -yqq install gnupg2 && \
-    apt -yqq install curl unzip && \
-    apt -yqq install iputils-ping && \
-    apt -yqq install xvfb && \
-    apt -yqq install fonts-ipafont-gothic xfonts-100dpi xfonts-75dpi xfonts-scalable xfonts-cyrillic && \
-    rm -rf /var/lib/apt/lists/*
+RUN apt -yqq update
     
 RUN pip3 install --upgrade pip --no-cache-dir && \
     pip3 install --upgrade setuptools --no-cache-dir && \
