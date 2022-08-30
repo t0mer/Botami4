@@ -18,6 +18,7 @@ RUN apt -yqq update && \
 RUN pip3 install --upgrade pip --no-cache-dir && \
     pip3 install --upgrade setuptools --no-cache-dir && \
     pip3 install pypasser --no-cache-dir && \
+    pip3 install loguru --no-cache-dir && \
     pip3 install Tami4EdgeAPI --no-cache-dir
 
 
