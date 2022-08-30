@@ -8,7 +8,7 @@ from telebot.custom_filters import AdvancedCustomFilter
 from telebot.callback_data import CallbackData, CallbackDataFilter
 
 PHONE_NUMBER = os.getenv('PHONE_NUMBER')
-CHAT_ID = os.getenv('ALLOWED_IDS')
+CHAT_ID = os.getenv('CHAT_ID')
 BOT_TOKEN = os.getenv('BOT_TOKEN')
 ENDPOINT = "https://swelcustomers.strauss-water.com"
 ANCHOR_URL = "https://www.google.com/recaptcha/enterprise/anchor?ar=1&k=6Lf-jYgUAAAAAEQiRRXezC9dfIQoxofIhqBnGisq&co=aHR0cHM6Ly93d3cudGFtaTQuY28uaWw6NDQz&hl=en&v=gWN_U6xTIPevg0vuq7g1hct0&size=invisible&cb=ji0lh9higcza"
