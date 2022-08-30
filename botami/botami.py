@@ -1,5 +1,6 @@
+from ctypes.wintypes import PUSHORT
 from errno import EDEADLK
-import Tami4EdgeAPI
+from Tami4EdgeAPI import Tami4EdgeAPI
 import os, requests, phonenumbers, pathlib
 from os.path import exists
 from warnings import catch_warnings
@@ -14,7 +15,7 @@ ALLOWD_IDS = os.getenv('ALLOWD_IDS')
 BOT_TOKEN = os.getenv('BOT_TOKEN')
 ENDPOINT = "https://swelcustomers.strauss-water.com"
 ANCHOR_URL = "https://www.google.com/recaptcha/enterprise/anchor?ar=1&k=6Lf-jYgUAAAAAEQiRRXezC9dfIQoxofIhqBnGisq&co=aHR0cHM6Ly93d3cudGFtaTQuY28uaWw6NDQz&hl=en&v=gWN_U6xTIPevg0vuq7g1hct0&size=invisible&cb=ji0lh9higcza"
-
+edge = None
 # ----------------Set token file path --------------------
 TOKEN_DIRECTORY = os.getcwd()
 TOKEN_DIRECTORY = TOKEN_DIRECTORY + "/tokens"
@@ -22,11 +23,13 @@ TOKEN_FILE = TOKEN_DIRECTORY + "/token.txt"
 
 #Init bot
 bot = TeleBot(BOT_TOKEN)
-edge = None
+
 # ---------------- Save token to file --------------------
 def save_refresh_token(refresh_token):
     global TOKEN_FILE
     try:
+      if exists(TOKEN_FILE):
+        os.remove(exists(TOKEN_FILE))
       with open(TOKEN_FILE, 'w') as f:
         f.write(refresh_token)
     except Exception as e:
@@ -101,7 +104,7 @@ def get_token(message):
 commands = [{"text": " חידוש / יצירת טוקן", "callback_data": "config"},
             {"text": "רשימת משקאות", "callback_data": "drinks_list"},
             {"text": "סטטיסטיקת שימוש", "callback_data": "statistics"},
-            {"text": "הרתחה", "callback_data": "boiling"},
+            {"text": "הרתחה", "callback_data": "boil"},
             {"text": "תחזוקה", "callback_data": "status"}, 
             {"text": "ביטול", "callback_data": "exit"},  ]
 
@@ -131,28 +134,44 @@ def is_valid_phone_number(my_number):
 @bot.message_handler(commands=['start', 'help'])
 def send_welcome(message):
     global TOKEN_FILE
-    if(not exists(TOKEN_FILE)):
-        bot.send_message(message.chat.id, text="Token file does not exixts, pleas generate new token")
-    else
-        if not read_refresh_token():
-            bot.send_message(message.chat.id, text="Token file is empty, pleas generate new token")
+    init_edge_device(message)
+    # if(not exists(TOKEN_FILE)):
+    #     bot.send_message(message.chat.id, text="Token file does not exixts, pleas generate new token")
+    # else:
+    #     if not read_refresh_token():
+    #         bot.send_message(message.chat.id, text="Token file is empty, pleas generate new token")
 
     bot.send_message(message.chat.id, text="welcome", reply_markup=command_keyboard(), parse_mode='Markdown')
 
 # ---------------- Handle the config button --------------------
 @bot.callback_query_handler(func=lambda c: c.data == 'config')
-def back_callback(call: types.CallbackQuery):
+def config_callback(call: types.CallbackQuery):
    msg = bot.send_message(call.message.chat.id, "Please enter your phone number with country code (+972xxxxxxxxx):", reply_markup=types.ForceReply(selective=False))
    bot.register_next_step_handler(msg, phonenumber_validation) 
 
-def init_edge_device():
+
+# ---------------- Handle the boil command --------------------
+@bot.callback_query_handler(func=lambda c: c.data == 'boil')
+def boil_callback(call: types.CallbackQuery):
+    global edge
+    init_edge_device(call.message)
+    edge.boil_water()
+
+
+
+
+def init_edge_device(message):
     global edge
     try:
-        if edge is None:
-            edge = Tami4EdgeAPI(read_refresh_token)
+        token = read_refresh_token()
+        if token:
+            if  edge is None:
+                edge = Tami4EdgeAPI(token)
+                bot.send_message(message.chat.id, text=f"Bar Name: {edge.device.name}, Firmware Version: {edge.device.device_firmware}")
         else:
-            a=1
+            bot.send_message(message.chat.id, text="Token file does not exixts or the file is empty, pleas generate new token")
     except Exception as e:
+        bot.send_message(message.chat.id, text="Error occurred when initializing edge device, see details in log file")
         logger.error(str(e))
 
 if __name__ == "__main__":
