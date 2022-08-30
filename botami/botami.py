@@ -7,6 +7,7 @@ from loguru import logger
 PHONE_NUMBER = os.getenv('PHONE_NUMBER')
 ENDPOINT = "https://swelcustomers.strauss-water.com"
 ANCHOR_URL = "https://www.google.com/recaptcha/enterprise/anchor?ar=1&k=6Lf-jYgUAAAAAEQiRRXezC9dfIQoxofIhqBnGisq&co=aHR0cHM6Ly93d3cudGFtaTQuY28uaWw6NDQz&hl=en&v=gWN_U6xTIPevg0vuq7g1hct0&size=invisible&cb=ji0lh9higcza"
+i=0
 
 def recaptcha_token():
     return reCaptchaV3(ANCHOR_URL)
@@ -37,7 +38,7 @@ if __name__ == "__main__":
     phone_number = PHONE_NUMBER
     request_otp(phone_number)
     while(True):
-        i=i+a
+        i=i+1
 
     
     
