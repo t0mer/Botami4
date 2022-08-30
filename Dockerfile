@@ -8,7 +8,7 @@ ENV LANG=C.UTF-8
 ENV ALLOWED_IDS ""
 ENV PHONE_NUMBER ""
 
-RUN apt -yqq update
+
     
 RUN pip3 install --upgrade pip --no-cache-dir && \
     pip3 install --upgrade setuptools --no-cache-dir && \
