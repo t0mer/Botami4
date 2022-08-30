@@ -33,9 +33,14 @@ def submit_otp(phone_number, otp):
     ).json()
     return response
 
+if __name__ == "__main__":
+    phone_number = PHONE_NUMBER
+    request_otp(phone_number)
+    while(True):
+        i=i+a
 
-phone_number = PHONE_NUMBER
-request_otp(phone_number)
+    
+    
 # otp = input("OTP: ")
 # response = submit_otp(phone_number, otp)
 # logger.info(response['refresh_token'])
