@@ -1,7 +1,8 @@
-import Tami4EdgeAPI
+# import Tami4EdgeAPI
 import os
-from pypasser import reCaptchaV3
+# from pypasser import reCaptchaV3
 import requests
+import phonenumbers
 from loguru import logger
 from telebot import types, TeleBot
 from telebot.custom_filters import AdvancedCustomFilter
@@ -50,7 +51,6 @@ commands = [{"text": " חידוש / יצירת טוקן", "callback_data": "conf
             {"text": "תחזוקה", "callback_data": "status"}, 
             {"text": "ביטול", "callback_data": "exit"},  ]
 
-
 # ------------- Build command keyboard -----------------
 def command_keyboard():
     return types.InlineKeyboardMarkup(
@@ -65,17 +65,56 @@ def command_keyboard():
         ], row_width=1
     )
 
+def is_valid_phone_number(my_number):
+    if(my_number.startswith('+')):
+        my_number = phonenumbers.parse(my_number)
+        return phonenumbers.is_possible_number(my_number)
+    else:
+        return False
 
 
 @bot.message_handler(commands=['start', 'help'])
 def send_welcome(message):
-	  bot.send_message(CHAT_ID=message.chat.id, text="welcome", reply_markup=command_keyboard(), parse_mode='Markdown')
+	  bot.send_message(CHAT_ID, text="welcome", reply_markup=command_keyboard(), parse_mode='Markdown')
+
+
+
+# ---------------- Handle the configf button --------------------
+@bot.callback_query_handler(func=lambda c: c.data == 'config')
+def back_callback(call: types.CallbackQuery):
+   bot.send_message(CHAT_ID, "Please enter your phone number with country code (+972xxxxxxxxx):", reply_markup=types.ForceReply(selective=False),callback_data="phone_validation")
+    
+
+
+@bot.callback_query_handler(func=lambda c: c.data == 'phone_validation')
+def back_callback(call: types.CallbackQuery):
+   bot.send_message(CHAT_ID, "Please enter your phone number with country code (+972xxxxxxxxx):", reply_markup=types.ForceReply(selective=False),callback_data="phone_validation")
+    
+
+
+@bot.message_handler(func=lambda message: True)
+def echo_all(message):
+    if(is_valid_phone_number(message.text)):
+        bot.reply_to(message, message.text)
+    else:
+        bot.send_message(CHAT_ID, "Invalid Phone number, please enter valid one (+972xxxxxxxxx):", reply_markup=types.ForceReply(selective=False))
+
+
+
+# @bot.message_handler(commands=['setalarm'])
+# def setalarmcmd(message):
+#     alarmMessage = "Let's start with setting up alarm.\n\n" \
+#                    "First of all, provide the pair you want to observe."
+#     msg = bot.send_message(message.chat.id, alarmMessage)
+#     bot.register_next_step_handler(msg, setalarmcryptopair)
+
+
+def setalarmcryptopair(pair):
+    print(pair.text)
 
 
 
 if __name__ == "__main__":
-    markup = types.ForceReply(selective=False)
-    bot.send_message(CHAT_ID, "Send me another word:", reply_markup=markup)
     bot.infinity_polling()
     
 

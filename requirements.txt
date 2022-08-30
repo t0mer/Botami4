@@ -2,5 +2,5 @@ loguru
 requests
 pypasser
 Tami4EdgeAPI
-telepot
+phonenumbers
 pyTelegramBotAPI
