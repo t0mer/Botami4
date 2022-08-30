@@ -3,8 +3,7 @@ FROM python:latest
 ENV API_KEY ""
 ENV PYTHONIOENCODING=utf-8
 ENV LANG=C.UTF-8
-ENV CHAT_ID ""
-ENV PHONE_NUMBER ""
+ENV ALLOWD_IDS ""
 LABEL authors="tomer.klein@gmail.com"
 
 RUN apt -yqq update && \
