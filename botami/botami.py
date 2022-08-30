@@ -36,7 +36,7 @@ def submit_otp(phone_number, otp):
 
 phone_number = PHONE_NUMBER
 request_otp(phone_number)
-otp = input("OTP: ")
-response = submit_otp(phone_number, otp)
-logger.info(response['refresh_token'])
+# otp = input("OTP: ")
+# response = submit_otp(phone_number, otp)
+# logger.info(response['refresh_token'])
 
