@@ -1,4 +1,6 @@
-FROM python:latest
+#FROM python:latest
+
+FROM selenium/standalone-firefox
 
 ENV API_KEY ""
 ENV PYTHONIOENCODING=utf-8
