@@ -10,10 +10,10 @@ ENV PHONE_NUMBER ""
 
 
     
-RUN pip3 install --upgrade pip --no-cache-dir && \
-    pip3 install --upgrade setuptools --no-cache-dir && \
-    pip3 install pypasser --no-cache-dir && \
-    pip3 install Tami4EdgeAPI --no-cache-dir
+RUN pip install --upgrade pip --no-cache-dir && \
+    pip install --upgrade setuptools --no-cache-dir && \
+    pip install pypasser --no-cache-dir && \
+    pip install Tami4EdgeAPI --no-cache-dir
 
 RUN mkdir -p /opt/botami
 
