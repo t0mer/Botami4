@@ -1,4 +1,4 @@
-FROM ubuntu:latest
+FROM python:latest
 
 ENV API_KEY ""
 ENV PYTHONIOENCODING=utf-8
