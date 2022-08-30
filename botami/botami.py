@@ -41,6 +41,38 @@ def submit_otp(phone_number, otp):
     ).json()
     return response
 
+
+# -------------- Set command list -------------------------------------
+commands = [{"text": " חידוש / יצירת טוקן", "callback_data": "config"},
+            {"text": "רשימת משקאות", "callback_data": "drinks_list"},
+            {"text": "סטטיסטיקת שימוש", "callback_data": "statistics"},
+            {"text": "הרתחה", "callback_data": "boiling"},
+            {"text": "תחזוקה", "callback_data": "status"}, 
+            {"text": "ביטול", "callback_data": "exit"},  ]
+
+
+# ------------- Build command keyboard -----------------
+def command_keyboard():
+    return types.InlineKeyboardMarkup(
+        keyboard=[
+            [
+                types.InlineKeyboardButton(
+                    text=command['text'],
+                    callback_data=command["callback_data"]
+                )
+            ]
+            for command in commands
+        ], row_width=1
+    )
+
+
+
+@bot.message_handler(commands=['start', 'help'])
+def send_welcome(message):
+	  bot.send_message(CHAT_ID=message.chat.id, text="welcome", reply_markup=command_keyboard(), parse_mode='Markdown')
+
+
+
 if __name__ == "__main__":
     markup = types.ForceReply(selective=False)
     bot.send_message(CHAT_ID, "Send me another word:", reply_markup=markup)
