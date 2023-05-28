@@ -17,11 +17,12 @@ BOT_TOKEN = os.getenv('BOT_TOKEN')
 ENDPOINT = "https://swelcustomers.strauss-water.com"
 ANCHOR_URL = "https://www.google.com/recaptcha/enterprise/anchor?ar=1&k=6Lf-jYgUAAAAAEQiRRXezC9dfIQoxofIhqBnGisq&co=aHR0cHM6Ly93d3cudGFtaTQuY28uaWw6NDQz&hl=en&v=gWN_U6xTIPevg0vuq7g1hct0&size=invisible&cb=ji0lh9higcza"
 edge = None
+drinks = []
 # ----------------Set token file path --------------------
 TOKEN_DIRECTORY = os.getcwd()
 TOKEN_DIRECTORY = TOKEN_DIRECTORY + "/tokens"
 TOKEN_FILE = TOKEN_DIRECTORY + "/token.txt"
-
+messageid = 0
 #Init bot
 bot = TeleBot(BOT_TOKEN)
 
@@ -108,6 +109,23 @@ commands = [{"text": " חידוש / יצירת טוקן", "callback_data": "conf
             {"text": "הרתחה", "callback_data": "boil"},
             {"text": "ביטול", "callback_data": "exit"},  ]
 
+
+def drinks_keyboard(drinks):
+    logger.debug("Build Routes Keyboard")
+    markup = types.InlineKeyboardMarkup()
+    markup.row_width=2
+    for drink in drinks:
+        markup.add(types.InlineKeyboardButton(
+            text=drink.name,
+            callback_data="_drink_" + drink.id))
+    markup.add(types.InlineKeyboardButton(
+            text="Back ↩",
+            callback_data="back"))
+    return markup
+
+
+
+
 # ------------- Build command keyboard -----------------
 def command_keyboard():
     return types.InlineKeyboardMarkup(
@@ -133,65 +151,90 @@ def is_valid_phone_number(my_number):
 # ---------------- Handle the start menu --------------------
 @bot.message_handler(commands=['start', 'help'])
 def send_welcome(message):
+    global messageid
     global TOKEN_FILE
-    init_edge_device(message)
-    # if(not exists(TOKEN_FILE)):
-    #     bot.send_message(message.chat.id, text="Token file does not exixts, pleas generate new token")
-    # else:
-    #     if not read_refresh_token():
-    #         bot.send_message(message.chat.id, text="Token file is empty, pleas generate new token")
-
-    msg=bot.send_message(message.chat.id, text="welcome", reply_markup=command_keyboard(), parse_mode='Markdown')
-    print(msg.id)
+    if str(message.chat.id) in ALLOWD_IDS:
+        init_edge_device(message)
+        messageid=bot.send_message(message.chat.id, text="welcome", reply_markup=command_keyboard(), parse_mode='Markdown').message_id
+    
 # ---------------- Handle the config button --------------------
 @bot.callback_query_handler(func=lambda c: c.data == 'config')
 def config_callback(call: types.CallbackQuery):
-   msg = bot.send_message(call.message.chat.id, "Please enter your phone number with country code (+972xxxxxxxxx):", reply_markup=types.ForceReply(selective=False))
-   bot.register_next_step_handler(msg, phonenumber_validation) 
+   global messageid
+
+   if str(call.message.chat.id) in ALLOWD_IDS:
+    msg = bot.send_message(call.message.chat.id, "Please enter your phone number with country code (+972xxxxxxxxx):", reply_markup=types.ForceReply(selective=False))
+    messageid = msg.message_id
+    bot.register_next_step_handler(msg, phonenumber_validation) 
+
+
+# ---------------- Handle the config button --------------------
+@bot.callback_query_handler(func=lambda c: c.data == 'exit')
+def config_callback(call: types.CallbackQuery):
+   global messageid
+   bot.delete_message(message_id=messageid,chat_id=call.message.chat.id)
+
+# ---------------- Handle the config button --------------------
+@bot.callback_query_handler(func=lambda c: c.data == 'back')
+def config_callback(call: types.CallbackQuery):
+   global messageid
+
+   if str(call.message.chat.id) in ALLOWD_IDS:
+    bot.delete_message(message_id=messageid,chat_id=call.message.chat.id)
+    messageid=bot.send_message(call.message.chat.id, text="welcome", reply_markup=command_keyboard(), parse_mode='Markdown').message_id
+
 
 
 # ---------------- Handle the boil command --------------------
 @bot.callback_query_handler(func=lambda c: c.data == 'boil')
 def boil_callback(call: types.CallbackQuery):
     global edge
-    init_edge_device(call.message)
-    logger.info("Boiling water")
-    edge.boil_water()
+
+    if str(call.message.chat.id) in ALLOWD_IDS:
+        init_edge_device(call.message)
+        edge.boil_water()
 
 @bot.callback_query_handler(func=lambda c: c.data == 'drinks_list')
 def drinks_list_callback(call: types.CallbackQuery):
     global edge
-    init_edge_device(call.message)
-    logger.info("Getting drinks list")
-    # edge.boil_water()
-    drinks = edge.get_drinks()
-    for drink in drinks:
-        print(drink)
+    global messageid
+    global drinks
 
+    if str(call.message.chat.id) in ALLOWD_IDS:
+        init_edge_device(call.message)
+        drinks = edge.get_drinks()
+        msg=bot.send_message(call.message.chat.id,text='Drinks', reply_markup=drinks_keyboard(drinks=drinks), parse_mode='Markdown')
+        bot.delete_message(message_id=messageid,chat_id=call.message.chat.id)
+        messageid = msg.message_id
 
 @bot.callback_query_handler(func=lambda c: c.data == 'statistics')
 def boil_callback(call: types.CallbackQuery):
     global edge
-    init_edge_device(call.message)
-    logger.info("Getting statistics")
-    # edge.boil_water()
-    statistics = edge.get_water_quality()
-    stats = f"""
-    *Usage Statistics:* \n
-    *Filter*:
-            Last Replacemnt: {statistics.filter.last_replacement.strftime("%d/%m/%Y")}
-            Next Replacement: {statistics.filter.upcoming_replacement.strftime("%d/%m/%Y")}
-            Status: {statistics.filter.status}
-            Liters Passed: {int(statistics.filter.milli_litters_passed)/1000}
+    global messageid
 
-*UV*:
-            Last Replacemnt: {statistics.uv.last_replacement.strftime("%d/%m/%Y")}
-            Next Replacement: {statistics.uv.upcoming_replacement.strftime("%d/%m/%Y")}
-            Status: {statistics.uv.status}            
-    """
-    msg = bot.send_message(call.message.chat.id, text=stats,parse_mode='Markdown')
-    print(msg.id)
-# 
+    if str(call.message.chat.id) in ALLOWD_IDS:
+        init_edge_device(call.message)
+        logger.info("Getting statistics")
+        # edge.boil_water()
+        statistics = edge.get_water_quality()
+        stats = f"""
+        *Usage Statistics:* \n
+        *Filter*:
+                Last Replacemnt: {statistics.filter.last_replacement.strftime("%d/%m/%Y")}
+                Next Replacement: {statistics.filter.upcoming_replacement.strftime("%d/%m/%Y")}
+                Status: {statistics.filter.status}
+                Liters Passed: {int(statistics.filter.milli_litters_passed)/1000}
+
+    *UV*:
+                Last Replacemnt: {statistics.uv.last_replacement.strftime("%d/%m/%Y")}
+                Next Replacement: {statistics.uv.upcoming_replacement.strftime("%d/%m/%Y")}
+                Status: {statistics.uv.status}            
+        """
+        msg = bot.send_message(call.message.chat.id, text=stats,parse_mode='Markdown')
+        bot.delete_message(message_id=messageid,chat_id=call.message.chat.id)
+        messageid = msg.message_id
+
+
 def init_edge_device(message):
     global edge
     try:
@@ -199,12 +242,9 @@ def init_edge_device(message):
         if token:
             if  edge is None:
                 edge = Tami4EdgeAPI(token)
-                # bot.send_message(message.chat.id, text=f"Bar Name: {edge.device.name}, Firmware Version: {edge.device.device_firmware}")
         else:
             pass
-            # bot.send_message(message.chat.id, text="Token file does not exixts or the file is empty, pleas generate new token")
     except Exception as e:
-        # bot.send_message(message.chat.id, text="Error occurred when initializing edge device, see details in log file")
         logger.error(str(e))
 
 if __name__ == "__main__":
