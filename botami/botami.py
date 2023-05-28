@@ -9,9 +9,10 @@ from loguru import logger
 from telebot import types, TeleBot
 from telebot.custom_filters import AdvancedCustomFilter
 from telebot.callback_data import CallbackData, CallbackDataFilter
+from datetime import datetime
 
 PHONE_NUMBER =""
-ALLOWD_IDS = os.getenv('ALLOWD_IDS')
+ALLOWD_IDS = os.getenv('ALLOWED_IDS')
 BOT_TOKEN = os.getenv('BOT_TOKEN')
 ENDPOINT = "https://swelcustomers.strauss-water.com"
 ANCHOR_URL = "https://www.google.com/recaptcha/enterprise/anchor?ar=1&k=6Lf-jYgUAAAAAEQiRRXezC9dfIQoxofIhqBnGisq&co=aHR0cHM6Ly93d3cudGFtaTQuY28uaWw6NDQz&hl=en&v=gWN_U6xTIPevg0vuq7g1hct0&size=invisible&cb=ji0lh9higcza"
@@ -103,9 +104,8 @@ def get_token(message):
 # -------------- Set command list -------------------------------------
 commands = [{"text": " חידוש / יצירת טוקן", "callback_data": "config"},
             {"text": "רשימת משקאות", "callback_data": "drinks_list"},
-            {"text": "סטטיסטיקת שימוש", "callback_data": "statistics"},
+            {"text": "סטטיסטיקה ותחזוקה", "callback_data": "statistics"},
             {"text": "הרתחה", "callback_data": "boil"},
-            {"text": "תחזוקה", "callback_data": "status"}, 
             {"text": "ביטול", "callback_data": "exit"},  ]
 
 # ------------- Build command keyboard -----------------
@@ -141,8 +141,8 @@ def send_welcome(message):
     #     if not read_refresh_token():
     #         bot.send_message(message.chat.id, text="Token file is empty, pleas generate new token")
 
-    bot.send_message(message.chat.id, text="welcome", reply_markup=command_keyboard(), parse_mode='Markdown')
-
+    msg=bot.send_message(message.chat.id, text="welcome", reply_markup=command_keyboard(), parse_mode='Markdown')
+    print(msg.id)
 # ---------------- Handle the config button --------------------
 @bot.callback_query_handler(func=lambda c: c.data == 'config')
 def config_callback(call: types.CallbackQuery):
@@ -155,11 +155,43 @@ def config_callback(call: types.CallbackQuery):
 def boil_callback(call: types.CallbackQuery):
     global edge
     init_edge_device(call.message)
+    logger.info("Boiling water")
     edge.boil_water()
 
+@bot.callback_query_handler(func=lambda c: c.data == 'drinks_list')
+def drinks_list_callback(call: types.CallbackQuery):
+    global edge
+    init_edge_device(call.message)
+    logger.info("Getting drinks list")
+    # edge.boil_water()
+    drinks = edge.get_drinks()
+    for drink in drinks:
+        print(drink)
 
 
+@bot.callback_query_handler(func=lambda c: c.data == 'statistics')
+def boil_callback(call: types.CallbackQuery):
+    global edge
+    init_edge_device(call.message)
+    logger.info("Getting statistics")
+    # edge.boil_water()
+    statistics = edge.get_water_quality()
+    stats = f"""
+    *Usage Statistics:* \n
+    *Filter*:
+            Last Replacemnt: {statistics.filter.last_replacement.strftime("%d/%m/%Y")}
+            Next Replacement: {statistics.filter.upcoming_replacement.strftime("%d/%m/%Y")}
+            Status: {statistics.filter.status}
+            Liters Passed: {int(statistics.filter.milli_litters_passed)/1000}
 
+*UV*:
+            Last Replacemnt: {statistics.uv.last_replacement.strftime("%d/%m/%Y")}
+            Next Replacement: {statistics.uv.upcoming_replacement.strftime("%d/%m/%Y")}
+            Status: {statistics.uv.status}            
+    """
+    msg = bot.send_message(call.message.chat.id, text=stats,parse_mode='Markdown')
+    print(msg.id)
+# 
 def init_edge_device(message):
     global edge
     try:
@@ -167,11 +199,12 @@ def init_edge_device(message):
         if token:
             if  edge is None:
                 edge = Tami4EdgeAPI(token)
-                bot.send_message(message.chat.id, text=f"Bar Name: {edge.device.name}, Firmware Version: {edge.device.device_firmware}")
+                # bot.send_message(message.chat.id, text=f"Bar Name: {edge.device.name}, Firmware Version: {edge.device.device_firmware}")
         else:
-            bot.send_message(message.chat.id, text="Token file does not exixts or the file is empty, pleas generate new token")
+            pass
+            # bot.send_message(message.chat.id, text="Token file does not exixts or the file is empty, pleas generate new token")
     except Exception as e:
-        bot.send_message(message.chat.id, text="Error occurred when initializing edge device, see details in log file")
+        # bot.send_message(message.chat.id, text="Error occurred when initializing edge device, see details in log file")
         logger.error(str(e))
 
 if __name__ == "__main__":
