@@ -86,4 +86,4 @@ Next, enter your mobile phone number for the OPT:
 
 Then, enter the OPT you recieved and click "Send":
 
-![Add OTP](screenshot/otp.png)
+![Add OTP](screenshots/otp.png)
