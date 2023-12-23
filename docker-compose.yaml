@@ -9,9 +9,7 @@ services:
     container_name: botami
     restart: always
     environment:
-      - BOT_TOKEN=5628434379:AAENbvCrfSqr0Hn27_9fP5uIH8_G7n4bNz4
-      - ALLOWD_IDS=367468362
+      - BOT_TOKEN=
+      - ALLOWD_IDS=
     volumes:
-      - ./botami/tokens:/opt/botami/token
-
-
+      - ./botami/tokens:/opt/botami/tokens
