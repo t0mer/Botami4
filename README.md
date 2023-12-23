@@ -90,3 +90,8 @@ Then, enter the OPT you recieved and click "Send":
 
 You can now go back to the main menue by sending **/start** or **/help**:
 ![Main Menue](screenshots/start.png)
+
+To vew the water bar statistics, click on **סטטיסטיקה ותחזוקה**:
+![Stats Menue](screenshots/stats_menu.png)
+
+![Stats](screenshots/stats.png)
