@@ -12,7 +12,7 @@ from telebot.callback_data import CallbackData, CallbackDataFilter
 from datetime import datetime
 
 PHONE_NUMBER =""
-ALLOWD_IDS = os.getenv('ALLOWED_IDS')
+ALLOWED_IDS = os.getenv('ALLOWED_IDS')
 BOT_TOKEN = os.getenv('BOT_TOKEN')
 ENDPOINT = "https://swelcustomers.strauss-water.com"
 ANCHOR_URL = "https://www.google.com/recaptcha/enterprise/anchor?ar=1&k=6Lf-jYgUAAAAAEQiRRXezC9dfIQoxofIhqBnGisq&co=aHR0cHM6Ly93d3cudGFtaTQuY28uaWw6NDQz&hl=en&v=gWN_U6xTIPevg0vuq7g1hct0&size=invisible&cb=ji0lh9higcza"
@@ -155,7 +155,7 @@ def send_welcome(message):
     try:
         global messageid
         global TOKEN_FILE
-        if str(message.chat.id) in ALLOWD_IDS:
+        if str(message.chat.id) in ALLOWED_IDS:
             init_edge_device(message)
             messageid=bot.send_message(message.chat.id, text="welcome", reply_markup=command_keyboard(), parse_mode='Markdown').message_id
     except Exception as e:
@@ -166,7 +166,7 @@ def send_welcome(message):
 def config_callback(call: types.CallbackQuery):
     try:
         global messageid
-        if str(call.message.chat.id) in ALLOWD_IDS:
+        if str(call.message.chat.id) in ALLOWED_IDS:
             msg = bot.send_message(call.message.chat.id, "Please enter your phone number with country code (+972xxxxxxxxx):", reply_markup=types.ForceReply(selective=False))
             messageid = msg.message_id
             bot.register_next_step_handler(msg, phonenumber_validation) 
@@ -187,7 +187,7 @@ def exit_callback(call: types.CallbackQuery):
 def back_callback(call: types.CallbackQuery):
    try:
     global messageid
-    if str(call.message.chat.id) in ALLOWD_IDS:
+    if str(call.message.chat.id) in ALLOWED_IDS:
             bot.delete_message(message_id=messageid,chat_id=call.message.chat.id)
             messageid=bot.send_message(call.message.chat.id, text="welcome", reply_markup=command_keyboard(), parse_mode='Markdown').message_id
    except Exception as e:
@@ -198,7 +198,7 @@ def back_callback(call: types.CallbackQuery):
 def boil_callback(call: types.CallbackQuery):
     try:
         global edge
-        if str(call.message.chat.id) in ALLOWD_IDS:
+        if str(call.message.chat.id) in ALLOWED_IDS:
             init_edge_device(call.message)
             edge.boil_water()
     except Exception as e:
@@ -210,7 +210,7 @@ def drinks_list_callback(call: types.CallbackQuery):
         global edge
         global messageid
         global drinks
-        if str(call.message.chat.id) in ALLOWD_IDS:
+        if str(call.message.chat.id) in ALLOWED_IDS:
             init_edge_device(call.message)
             drinks = edge.get_drinks()
             msg=bot.send_message(call.message.chat.id,text='Drinks', reply_markup=drinks_keyboard(drinks=drinks), parse_mode='Markdown')
@@ -240,7 +240,7 @@ def boil_callback(call: types.CallbackQuery):
         global edge
         global messageid
 
-        if str(call.message.chat.id) in ALLOWD_IDS:
+        if str(call.message.chat.id) in ALLOWED_IDS:
             init_edge_device(call.message)
             statistics = edge.get_water_quality()
             stats = f"""
