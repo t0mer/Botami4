@@ -73,7 +73,7 @@ services:
 
 
 ## Using the bot
-To start using Botami, Open you telegram, go to the bot and write **/start** or **/help**:
+To start using Botami, Open you telegram, go to the bot and send  **/start** or **/help**:
 ![Main Menue](screenshots/start.png)
 
 Then click on **חידוש / יצירת טוקן**:
@@ -87,3 +87,6 @@ Next, enter your mobile phone number for the OPT:
 Then, enter the OPT you recieved and click "Send":
 
 ![Add OTP](screenshots/otp.png)
+
+You can now go back to the main menue by sending **/start** or **/help**:
+![Main Menue](screenshots/start.png)
