@@ -79,3 +79,7 @@ To start using Botami, Open you telegram, go to the bot and write **/start** or 
 Then click on **חידוש / יצירת טוקן**:
 
 ![Generate Token](screenshots/token.png)
+
+Next, enter your mobile phone number for the OPT:
+
+![Enter Number](screenshots/phone.png)
