@@ -83,3 +83,7 @@ Then click on **חידוש / יצירת טוקן**:
 Next, enter your mobile phone number for the OPT:
 
 ![Enter Number](screenshots/phone.png)
+
+Then, enter the OPT you recieved and click "Send":
+
+![Add OTP](screenshot/otp.png)
