@@ -77,4 +77,5 @@ To start using Botami, Open you telegram, go to the bot and write **/start** or 
 ![Main Menue](screenshots/start.png)
 
 Then click on **חידוש / יצירת טוקן**:
+
 ![Generate Token](screenshots/token.png)
