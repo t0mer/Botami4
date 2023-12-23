@@ -68,4 +68,10 @@ services:
 * BOT_TOKEN - Token for the TelegramBot.
 * ALLOWD_IDS - The telegram Id's allowed to use this bot ([Here](https://www.alphr.com/telegram-find-user-id/) You can find the instructions on how to get your ID)
 
+### Volumes
+* ./botami/tokens - To use the Tami4EdgeAPI, persistent volume should be configured. In this pah the token will be saved as a text file named **token.txt**
 
+
+## Using the bot
+To start using Botami, Open you telegram, go to the bot and write **/start** or **/help**:
+![Main Menue](screenshots/start.png)
