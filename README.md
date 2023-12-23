@@ -16,7 +16,7 @@ Botami is python powerd Telegram bot that allows us to communicate with Tami4 Ed
 
 ## Installation
 
-Before we can start working with Wazy, we need to create a new telegram bot. 
+Before we can start working with Botami, we need to create a new telegram bot. 
 
 ### Create Telegram bot
 How to Create a New Bot for Telegram
@@ -66,6 +66,6 @@ services:
 
 ### Environment
 * BOT_TOKEN - Token for the TelegramBot.
-* ALLOWD_IDS - The telegram Id's allowed to use this bot.
+* ALLOWD_IDS - The telegram Id's allowed to use this bot ([Here](https://www.alphr.com/telegram-find-user-id/) You can find the instructions on how to get your ID)
 
 
