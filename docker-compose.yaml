@@ -10,6 +10,6 @@ services:
     restart: always
     environment:
       - BOT_TOKEN=
-      - ALLOWD_IDS=
+      - ALLOWED_IDS=
     volumes:
       - ./botami/tokens:/opt/botami/tokens
