@@ -5,3 +5,4 @@ Tami4EdgeAPI
 phonenumbers
 pyTelegramBotAPI
 selenium>=4.15.1 # not directly required, pinned by Snyk to avoid a vulnerability
+urllib3>=2.2.2 # not directly required, pinned by Snyk to avoid a vulnerability
