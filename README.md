@@ -74,24 +74,24 @@ services:
 
 ## Using the bot
 To start using Botami, Open you telegram, go to the bot and send  **/start** or **/help**:
-![Main Menue](screenshots/start.png)
+![Main Menue](https://raw.githubusercontent.com/t0mer/Botami4/main/screenshots/start.png)
 
 Then click on **חידוש / יצירת טוקן**:
 
-![Generate Token](screenshots/token.png)
+![Generate Token](https://raw.githubusercontent.com/t0mer/Botami4/main/screenshots/token.png)
 
 Next, enter your mobile phone number for the OPT:
 
-![Enter Number](screenshots/phone.png)
+![Enter Number](https://raw.githubusercontent.com/t0mer/Botami4/main/screenshots/phone.png)
 
 Then, enter the OPT you recieved and click "Send":
 
-![Add OTP](screenshots/otp.png)
+![Add OTP](https://raw.githubusercontent.com/t0mer/Botami4/main/screenshots/otp.png)
 
 You can now go back to the main menue by sending **/start** or **/help**:
-![Main Menue](screenshots/start.png)
+![Main Menue](https://raw.githubusercontent.com/t0mer/Botami4/main/screenshots/start.png)
 
 To vew the water bar statistics, click on **סטטיסטיקה ותחזוקה**:
-![Stats Menue](screenshots/stats_menu.png)
+![Stats Menue](https://raw.githubusercontent.com/t0mer/Botami4/main/screenshots/stats_menu.png)
 
-![Stats](screenshots/stats.png)
+![Stats](https://raw.githubusercontent.com/t0mer/Botami4/main/screenshots/stats.png)
